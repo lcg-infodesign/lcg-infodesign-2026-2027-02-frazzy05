@@ -3,29 +3,34 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-
-    background(220);
     //disegno glifi
-    let numeroGlifi = 110;
+    let numeroGlifi = 180;
     let numeroColonne = ceil(sqrt(numeroGlifi));
-    let numeroRighe = sqrt(numeroGlifi);
+    let numeroRighe = ceil(numeroGlifi / numeroColonne);
+    let dimCella = 160;
+
     let dimColonna= windowWidth / numeroColonne;
-    let dimRiga = windowHeight / numeroRighe;
+    let dimRiga = dimColonna * 1.2;
+
+    let larghezzaTotale = numeroColonne * dimCella;
+    let altezzaTotale = numeroRighe * dimCella;
+
+    createCanvas(larghezzaTotale, altezzaTotale);
+    background('midnightblue');
 
     let xCorrente = 0;
     let yCorrente = 0;
 
-    for (let g = 0; g < numeroGlifi; g++) {
+   for (let g = 0; g < numeroGlifi; g++) {
+    mioGlifo(xCorrente + dimCella / 2, yCorrente + dimCella / 2, dimCella * 0.7);
+    xCorrente = xCorrente + dimCella;
 
-      mioGlifo(xCorrente + dimColonna/2, yCorrente + dimRiga/2, dimRiga*0.8);
-      xCorrente = xCorrente + dimColonna;
-
-      if (xCorrente >= windowWidth) {
-        xCorrente = 0;
-        yCorrente = yCorrente + dimRiga;
-      }
+    // Se arrivi a fine riga, vai a capo
+    if (xCorrente >= larghezzaTotale) {
+      xCorrente = 0;
+      yCorrente = yCorrente + dimCella;
     }
+  }
 }
 
 function draw() {
@@ -34,19 +39,42 @@ function draw() {
 function mioGlifo(_x, _y, _size) {
 push()
   translate(_x, _y);
-  circle(0, 0, _size);
+  angleMode (DEGREES);
 
-  //disegno il secondo pallino, faccio rotazione casuale 
+  const colorePianeta = random(['deeppink', 'red', 'orange', 'teal', 'aqua', 'lavander', 'cyan', 'lime', 'magenta', 'dodgerblue', 'darkorchid', 'sienna', 'chocolate', 'indigo', 'mediumseagreen']);
+  const coloreAnello = random(['khaki', 'darkkhaki', 'lightgreen', 'turquoise', 'mediumpurple', 'hotpink', 'orangered', 'gold', 'coral', 'sienna', 'chocolate', 'indigo', 'mediumseagreen']);
+  const circleSize = random(0.4, 0.9) * _size;
+
+
+  // Rotazione casuale 
+  rotate(random(0, 360)); 
+ 
+  //anello
+  noFill();
+  stroke(coloreAnello);
+  ellipse(0, 0, _size * 1.2, _size * 0.5);
+
+  //  pianeta
+  noStroke();
+  fill(colorePianeta);
+  circle(0, 0, circleSize);
+
+
+
+
+
+  //variabile  satelliti attorno al pianeta
   for (let i = 0; i < 4; i++) {
-  angleMode(DEGREES);
-  const mioRotazione = random(0, 360);
-  const mioRaggio = random(_size / 10, _size / 3);
-  push()
-  rotate(mioRotazione);
-  translate(_size/2, 0);
-  circle(0, 0, mioRaggio);
-  pop()
-  }
-  pop()
+    const angoloSatellite = i * 100; 
+    const coloreSatellite = random(['deeppink', 'red', 'orange', 'teal', 'aqua', 'lavander', 'cyan', 'lime', 'magenta', 'dodgerblue', 'darkorchid','sienna', 'chocolate', 'indigo', 'mediumseagreen']);
 
+    push();
+    rotate(angoloSatellite);
+    translate(_size * 0.55, 0);
+    fill(coloreSatellite);
+    circle(0, 0, _size * 0.15);
+    pop();
+  }
+
+  pop();
 }
